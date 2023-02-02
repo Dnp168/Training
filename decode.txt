@@ -1,0 +1,24 @@
+const resolveToken = (token) => { 
+    console.log("token : ", token); 
+    return new Promise((resolve, reject) => { 
+        jwt.verify(token, "darshan", function (err, decoded) { 
+            if (err) reject(err); 
+            console.log("decoded", decoded); 
+            resolve(decoded); 
+        }); 
+    }); 
+};
+
+app.post('/profile', async (req, res) => {
+    console.log(req.body.token);
+    try{
+        const ans =await resolveToken(req.body.token);
+        res.send(ans);
+    }catch(err){
+        res.send("loda error aavi");
+    }
+    // token=req.body.token;
+    // var decoded = jwt_decode(token);
+    // console.log(decoded);
+
+})
