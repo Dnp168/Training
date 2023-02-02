@@ -1,0 +1,15 @@
+.Header {
+    width: 100vw;
+    height: 8vh;
+    background-color: rgb(160, 155, 155);
+    color: white;
+    display: flex;
+    /* flex-direction: row; */
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.link {
+    margin-right: 30px;
+}
