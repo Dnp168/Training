@@ -1,0 +1,12 @@
+.category {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 6%;
+}
+
+.home {
+    margin-left: 50%;
+}
+
