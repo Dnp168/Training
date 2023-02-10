@@ -1,0 +1,12 @@
+.circular_image {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.circular_image img {
+  width: 100%;
+}
+
+.form {
+  margin-left: 43%;
+}
