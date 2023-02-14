@@ -10,7 +10,7 @@ function EditUser() {
     const [code, setCode] = useState('');
     const [email, setEmail] = useState('');
     const [hobbies, setHobbies] = useState([]);
-    const [photo, setPhoto] = useState('');
+    // const [photo, setPhoto] = useState('');
     const [country, setCountry] = useState('');
     const [file, setFile] = useState('');
     const [fileName, setFileName] = useState("");
@@ -20,14 +20,14 @@ function EditUser() {
     const id = localStorage.getItem("code");
     const [ans, setAns] = useState([]);
     const [image, setImage] = useState('');
-   
-
 
     const saveFile = (e) => {
         setFile(e.target.files[0]);
         setFileName(e.target.files[0].name);
     };
+    useEffect(()=>{
 
+    },[fileName])
     const getHobbies = (e) => {
         const { value, checked } = e.target
         if (checked) {
@@ -40,26 +40,26 @@ function EditUser() {
 
     function viewData() {
         // console.log(id);
-        axios.post("http://localhost:8080/viewData",{ id }).then((res) => {
+        axios.post("http://localhost:8080/viewData", { id }).then((res) => {
             const ans = res.data[0];
             // console.log(ans)
-            let image=ans.photo.split('/');
-            // console.log(image[image.length-1]);
-            setImage(image[image.length-1]);
+            let image = ans.photo.split('/');
+            setImage(image[image.length - 1]);
+            console.log(image)
             setCode(ans.code)
             setFirstname(ans.firstname);
             setLastname(ans.lastname);
             setEmail(ans.email);
             setGender(ans.gender);
             setHobbies(ans.hobbies);
-            setCountry(ans.country); 
+            setCountry(ans.country);
         })
     }
     useEffect(() => {
         viewData()
     }, []);
-
-    function handleSubmit(event) {
+   
+    async function handleSubmit(event) {
         event.preventDefault();
         if (code == "") {
             alert("Enter Code")
@@ -81,21 +81,23 @@ function EditUser() {
             alert("Please select your hobbies")
         } else if (country == "") {
             alert("Please select the country")
-        } 
+        }
         else {
-            if(fileName){
-            const formData = new FormData();
-            formData.append("file", file);
-            // console.log(formData);
-            formData.append("fileName", fileName);
-            console.log(fileName);
-            axios.post("http://localhost:8080/addUser", formData).then((res) => {
-            });}else{
-                setFileName(image)
+            try{
+                if (fileName) {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    // console.log(formData);
+                    formData.append("fileName", fileName);
+                    console.log(fileName);
+                    const ans = await axios.post("http://localhost:8080/addUser", formData);
+                    const ans1 = await axios.post("http://localhost:8080/updateUser", { code, firstname, lastname, gender, hobbies, email, country, fileName })
+                }else{
+                    const ans1 = await axios.post("http://localhost:8080/updateUser", { code, firstname, lastname, gender, hobbies, email, country, fileName:image })
+                }
+            }catch(err){
+                console.log(err);
             }
-            
-            axios.post("http://localhost:8080/updateUser", { code, firstname, lastname, gender, hobbies, email, country, fileName:image }).then((res) => {
-            });
             localStorage.clear();
             navigate("/")
         }
@@ -106,11 +108,11 @@ function EditUser() {
             <center>
                 <h1>Update User</h1>
             </center>
-            <img class='circular_image' src={`http://localhost:8080/getImage/${image}`} alt={image} height="150px" width="150px" border-radius="50%"/>
+            <img class='circular_image' src={`http://localhost:8080/getImage/${image}`} alt={image} height="150px" width="150px" border-radius="50%" />
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="code">Code</label>
-                    <input type="text" className="form-control" id="code" disabled value={code} placeholder="Enter Code (Format : USR001,USR002 )" onChange={(e) => { setCode(e.target.value) }} />
+                    <input type="text" className="form-control" id="code" disabled value={code} placeholder="Enter Code (Format : USR001,USR002 )" />
                 </div>
                 <br></br>
                 <div className="form-group">
@@ -153,13 +155,13 @@ function EditUser() {
                 <br></br>
                 <div>
                     <label htmlFor="hobbies">Hobbies: </label> &nbsp;
-                    <input id="Reading"  type="checkbox" name="hobbies" value="Reading" onChange={getHobbies} checked={hobbies.includes("Reading") ? "true" : ""}/>&nbsp;
+                    <input id="Reading" type="checkbox" name="hobbies" value="Reading" onChange={getHobbies} checked={hobbies.includes("Reading") ? "true" : ""} />&nbsp;
                     <label htmlFor="Reading">Reading</label>  &nbsp;&nbsp;
-                    <input id="Gaming"  type="checkbox" name="hobbies" value="Gaming" onChange={getHobbies} checked={hobbies.includes("Gaming") ? "true" : ""}/>&nbsp;
+                    <input id="Gaming" type="checkbox" name="hobbies" value="Gaming" onChange={getHobbies} checked={hobbies.includes("Gaming") ? "true" : ""} />&nbsp;
                     <label htmlFor="Gaming">Gaming</label> &nbsp;&nbsp;
-                    <input id="Coding"  type="checkbox" name="hobbies" value="Coding" onChange={getHobbies} checked={hobbies.includes("Coding") ? "true" : ""} />&nbsp;
+                    <input id="Coding" type="checkbox" name="hobbies" value="Coding" onChange={getHobbies} checked={hobbies.includes("Coding") ? "true" : ""} />&nbsp;
                     <label htmlFor="Coding">Coding</label> &nbsp;&nbsp;
-                    <input id="Drawing" type="checkbox" name="hobbies" value="Drawing" onChange={getHobbies} checked={hobbies.includes("Drawing")  ? "true" : ""} />&nbsp;
+                    <input id="Drawing" type="checkbox" name="hobbies" value="Drawing" onChange={getHobbies} checked={hobbies.includes("Drawing") ? "true" : ""} />&nbsp;
                     <label htmlFor="Drawing">Drawing</label> &nbsp;
                 </div>
                 <br></br>
@@ -186,7 +188,7 @@ function EditUser() {
                 </div>
                 <br></br>
                 <input type="submit" className="btn btn-primary" value="Submit" /> &nbsp;
-                <button className="btn btn-danger" onClick={() => {localStorage.clear(); navigate('/') }}>Back</button>
+                <button className="btn btn-danger" onClick={() => { localStorage.clear(); navigate('/') }}>Back</button>
             </form>
         </div>
     )

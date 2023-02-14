@@ -10,3 +10,9 @@
 .form {
   margin-left: 43%;
 }
+
+.filter {
+  display: flex;
+  justify-content: space-between;
+}
+

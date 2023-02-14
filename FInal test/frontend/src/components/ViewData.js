@@ -61,9 +61,11 @@ function ViewData() {
                 <label htmlFor="dateadded"><b>Date Added : </b>{ans.dateadded}</label>
             </div>
             <div className="form-group">
-                <label htmlFor="dateupdated"><b>Date Added : </b>{ans.dateupdated}</label>
+                <label htmlFor="dateupdated"><b>Date Updated : </b>{ans.dateupdated}</label>
             </div>
-            
+            <div className="form-group">
+                <label htmlFor="daatedeleted"><b>Date Deleted : </b>{ans.endeffdt}</label>
+            </div>
             <br></br>
             <button className="btn btn-danger" onClick={()=>{ localStorage.clear(); navigate('/')}}>Back</button>
         </form>
