@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
-import { CSVLink, CSVDownload } from 'react-csv';
-import Papa from "papaparse";
+import { CSVLink } from 'react-csv';
+// import Papa from "papaparse";
 
 import './App.css';
 
@@ -43,7 +43,7 @@ function UserData() {
 
     // const [reload, setReload] = useState(false);
     const [ans, setAns] = useState([]);
-    // const [ans1, setAns1] = useState('');
+    const [ans1, setAns1] = useState('');
     const [gender, setGender] = useState('');
     const [searchtext, setSearchtext] = useState('');
     const [status, setStatus] = useState('');
@@ -55,12 +55,12 @@ function UserData() {
     const [sortDate, setSortDate] = useState('');
     const [sortName, setSortName] = useState('');
     const allowedExtensions = ["csv"];
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const [file, setFile] = useState("");
-    const [data, setData] = useState([]);
-    const [import1, setImport] = useState(false)
+    // const [data, setData] = useState([]);
+    // const [import1, setImport] = useState(false)
     // const [totalpage, setTotalpage] = useState(2);
-    // const [total, setTotal] = useState(0);
+    const [total2, setTotal] = useState(0);
     const navigate = useNavigate();
     const headers = [
         { label: "Code", key: "code" },
@@ -94,39 +94,15 @@ function UserData() {
         setFileData(Ans);
     };
 
-    const handleFileChange = (e) =>{
-        setError("");
-        if (e.target.files.length) {
-            const inputFile = e.target.files[0];
-            const fileExtension = inputFile?.type.split("/")[1];
-            if (!allowedExtensions.includes(fileExtension)) {
-                setError("Please input a csv file");
-                return;
-            }
- 
-            setFile(inputFile);
-        }
-    }
-
-    const handleParse = () => {
-        if (!file) return setError("Enter a valid file");
- 
-        const reader = new FileReader();
-       
-        reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, { header: true });
-            const parsedData = csv?.data;
-            const columns = Object.keys(parsedData[0]);
-            setData(columns);
-        };
-        reader.readAsText(file);
-        setImport(false)
-    };
-
     const delete1 = (code) => {
-        axios.post("http://localhost:8080/delete", { code }).then((res) => {
+        if(window.confirm('Are you sure you wish to delete this user')==true){
+            axios.post("http://localhost:8080/delete", { code }).then((res) => {
+                getData()
+            })
+        } else {
             getData()
-        })
+        }
+       
     }
 
     const view = (code) => {
@@ -146,7 +122,7 @@ function UserData() {
     }
 
     function getData() {
-
+        
         axios.get("http://localhost:8080/getdata", { params: { searchtext: searchtext, gender: gender, status: status, hobbies: hobbies, currentPage, dataPerPage,sortDate,sortName } }).then((res) => {
             const ans = res.data;
             console.log(ans)
@@ -155,6 +131,15 @@ function UserData() {
         })
 
         
+    }
+
+    function total() {
+        axios.get("http://localhost:8080/total", { params: { searchtext: searchtext, gender: gender, status: status, hobbies: hobbies, currentPage, dataPerPage,sortDate,sortName } }).then((res) => {
+            const ans = res.data[0].total;
+            console.log(ans)
+            setAns1(ans);
+          
+        }) 
     }
 
     function reset() {
@@ -182,15 +167,6 @@ function UserData() {
         getData()
     }
 
-    // function sort() {
-    //     axios.get("http://localhost:8080/getdata", { params: { searchtext: "", gender: "", status: "", hobbies: "", currentPage, dataPerPage } }).then((res) => {
-    //         const ans = res.data;
-    //         console.log(ans)
-    //         setAns(ans);
-    //         CSV(ans)
-    //     })
-    //     setFilter(false);
-    // }
     const nameChange = () =>{
         if(sortName==""){
             setSortName("ASC");
@@ -217,12 +193,16 @@ function UserData() {
         }
     }
     useEffect(() => {
-        //   const total = Math.ceil(totalpage/dataPerPage);
-        //   console.log(total)
-        //     setTotal(total);
+        total()
+          
 
     }, [fileData]);
-
+    useEffect(() => {
+        const total1 = Math.ceil(ans1/dataPerPage);
+        console.log(total1)
+          setTotal(total1);
+    }, []);
+    
     return (
         <div>
             <center><h2>User Data</h2></center>
@@ -261,7 +241,7 @@ function UserData() {
 
 
                 <div >
-                    <button> {fileData?.length &&
+                    <button > {fileData?.length &&
                         <CSVLink
                             headers={headers}
                             data={fileData}
@@ -271,7 +251,7 @@ function UserData() {
                         </CSVLink>
                     }</button>&nbsp;&nbsp;
 
-            {  import1 ?    <div>
+            {/* {  import1 ?    <div>
             <label htmlFor="csvInput" style={{ display: "block" }}>
                 Enter CSV File
             </label>
@@ -282,9 +262,10 @@ function UserData() {
                 type="File"
             />
             <div>
-                <button onClick={handleParse}>Parse</button>
+                <button className="btn btn-secondary" onClick={handleParse}>Parse</button>
             </div>
-            </div> : <button onClick={()=>{setImport(true)}}>import</button> }
+            </div> : } */}
+            <button className="btn btn-secondary" onClick={()=>{navigate('/import')}}>import</button> 
                     &nbsp;
                     &nbsp;
                     <button className='btn btn-primary' onClick={() => { navigate('/addUser') }}>Add User</button>
@@ -308,27 +289,18 @@ function UserData() {
                 </thead>
                 <tbody>
                     { 
-                    // error ?
                         ans.map((item,index) => (
                             <Showdata item={item} index={index} delete1={delete1} getData={getData} view={view} edit={edit} statuschange={statuschange} />
                         ))
-                        // :
-                        // data.map((item,index) => (
-                        //     <tr key={index}>
-                        //         <td>{item}</td>
-                        //         <td></td>
-                        //         <td>{}</td>                            
-                        //     </tr>
-                        // ))
                     }
                 </tbody>
             </table>
             <div className="pagination">
                 <div style={{ marginLeft: "3%" }}>
-                    {currentPage != 0 ? <button onClick={backbtn}>Back</button> : <></>}
+                    {currentPage != 0 ? <button className="btn btn-secondary" onClick={backbtn}>Back</button> : <></>}
                 </div>
                 <div style={{ marginLeft: "86%" }}>
-                    {currentPage + 2 == 0 ? <></> : <button onClick={nextbtn} >Next</button>}
+                    {currentPage+1==total2 ?  <></> :<button onClick={nextbtn} className="btn btn-secondary" >Next</button> }
                 </div>
             </div>
             <br></br>

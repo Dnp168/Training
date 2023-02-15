@@ -8,9 +8,19 @@
 }
 
 .form {
-  margin-left: 43%;
+  margin-left: 25%;
+  margin-top: 2%;
+  height: 30%;
+  width: 50%;
+  background-color: beige;
 }
 
+.form1 {
+  margin-left: 35%;
+}
+.back {
+  margin-left: 17%;
+}
 .filter {
   display: flex;
   justify-content: space-between;

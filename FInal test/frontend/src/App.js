@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddUser from "./components/AddUser";
 import EditUser from "./components/EditUser";
+import ImportCSV from "./components/ImportCSV";
 import UserData from "./components/UserData";
 import ViewData from "./components/ViewData";
 
@@ -15,6 +16,7 @@ function App() {
           <Route exact path='/addUser' element={<AddUser/>}></Route>
           <Route exact path='/view' element={<ViewData/>}></Route>
           <Route exact path='/edit' element={<EditUser/>}></Route>
+          <Route exact path='/import' element={<ImportCSV/>}></Route>
         </Routes>
       </Router>
     </div>

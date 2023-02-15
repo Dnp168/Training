@@ -33,7 +33,7 @@ function EditUser() {
         if (checked) {
             setHobbies([...hobbies, value])
         }
-        else {
+        if(!checked){
             setHobbies(hobbies.filter((e) => e !== value))
         }
     }
@@ -51,12 +51,14 @@ function EditUser() {
             setLastname(ans.lastname);
             setEmail(ans.email);
             setGender(ans.gender);
-            setHobbies(ans.hobbies);
+            setHobbies(ans.hobbies.split(','));
             setCountry(ans.country);
+            setAns(ans)
         })
     }
     useEffect(() => {
         viewData()
+        
     }, []);
    
     async function handleSubmit(event) {
@@ -155,7 +157,8 @@ function EditUser() {
                 <br></br>
                 <div>
                     <label htmlFor="hobbies">Hobbies: </label> &nbsp;
-                    <input id="Reading" type="checkbox" name="hobbies" value="Reading" onChange={getHobbies} checked={hobbies.includes("Reading") ? "true" : ""} />&nbsp;
+                    <input id="Reading" type="checkbox" name="hobbies" value="Reading" onChange={getHobbies} 
+                    checked={hobbies.includes("Reading") ? "true" : ""} />&nbsp;
                     <label htmlFor="Reading">Reading</label>  &nbsp;&nbsp;
                     <input id="Gaming" type="checkbox" name="hobbies" value="Gaming" onChange={getHobbies} checked={hobbies.includes("Gaming") ? "true" : ""} />&nbsp;
                     <label htmlFor="Gaming">Gaming</label> &nbsp;&nbsp;
@@ -190,6 +193,7 @@ function EditUser() {
                 <input type="submit" className="btn btn-primary" value="Submit" /> &nbsp;
                 <button className="btn btn-danger" onClick={() => { localStorage.clear(); navigate('/') }}>Back</button>
             </form>
+            {/* {ans.hobbies.split(",")} */}
         </div>
     )
 }

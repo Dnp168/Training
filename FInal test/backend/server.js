@@ -105,11 +105,11 @@ app.get('/getdata', (req, res) => {
         query = ` where ` + query;
     }
         query = query+order;
-
+   
     dbConn.query(`select * from user_darshan ` + query + ` limit ${skipdata},${dataPerPage}`, (err, results) => {
         console.log(`select * from user_darshan ` + query + `limit ${skipdata},${dataPerPage}`)
         if (err) throw err;
-        res.send(results);
+            res.send(results)
     })
 })
 
@@ -181,6 +181,63 @@ app.post('/delete', (req, res) => {
         })
 })
 
+app.get('/total', (req, res) => {
+    console.log(req.query)
+    let text = req.query.searchtext;
+    let gender = req.query.gender;
+    let status = req.query.status;
+    let hobbies = req.query.hobbies;
+    let currentPage = req.query.currentPage;
+    let dataPerPage = req.query.dataPerPage;
+    let skipdata = currentPage*dataPerPage;
+    let sortDate = req.query.sortDate;
+    let sortName = req.query.sortName;
+    let query = "";
+    if (text != "") {
+        query = `code like "%${text}%" or firstname like "%${text}%" or lastname like "%${text}%" or email like "%${text}%"`;
+    }
+    if (gender != "") {
+        if (query != "") {
+            query = query + ` and gender="${gender}" `;
+        } else {
+            query = `gender="${gender}"`;
+        }
+    }
+
+    if (status != "") {
+        if (query != "") {
+            query = query + ` and status="${status}" `
+        } else {
+            query = `status="${status}"`;
+        }
+    }
+    if (hobbies != "") {
+        if (query != "") {
+            query = query + ` and (hobbies like "%${hobbies}%") `
+        } else {
+            query = `(hobbies like "%${hobbies}%") `
+        }
+    }
+
+    let order="";
+    if(sortName!="" && sortDate!=""){
+        order = ` order by firstname ${sortName}, dateadded ${sortDate} `;
+    } else if(sortName!="") {
+        order = ` order by firstname ${sortName} `;
+    } else if(sortDate!=""){
+        order = `order by dateadded ${sortDate} `;
+    }
+    if (query != "") {
+        query = ` where ` + query;
+    }
+        query = query+order;
+   
+    dbConn.query(`select count(*) as total from user_darshan ` + query + ` limit ${skipdata},${dataPerPage}`, (err, results) => {
+        console.log(`select * from user_darshan ` + query + `limit ${skipdata},${dataPerPage}`)
+        if (err) throw err;
+            res.send(results)
+    })
+})
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
