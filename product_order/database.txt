@@ -1,8 +1,0 @@
-product table
-
-create table product_1 (id int AUTO_INCREMENT,product_code varchar(100), name varchar(100), brand varchar(100), price int, product_status varchar(100),primary key(id));
-
-register table
-
-select * from register_1;
-create table register_1 (id int AUTO_INCREMENT,firstname varchar(100), lastname varchar(100), email varchar(100), password varchar(100),mobile numeric(10),gender varchar(20), address varchar(250),dob date,accesstoken varchar(100),primary key(id));

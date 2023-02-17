@@ -15,6 +15,7 @@ function Login() {
             localStorage.setItem("key", res.data[0].accesstoken);
             localStorage.setItem("fname", res.data[0].firstname);
             localStorage.setItem("lname", res.data[0].lastname);
+            localStorage.setItem("id",res.data[0].id);
             navigate("/product");
         });
     }

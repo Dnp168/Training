@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require('jsonwebtoken');
+const fs = require("fs");
+const { readFileSync } = require('fs');
+// const users = require("./order.json");
 // const jwt_decode = require("jwt-decode");
 const app = express();
 
@@ -55,7 +58,7 @@ app.post('/Login', (req, res) => {
 
                         dbConn.query(`Update register_1 SET accesstoken="${name}" where email = "${email}"`, function (err, results) {
 
-                            dbConn.query(`select firstname,lastname,accesstoken from register_1 where email = "${email}"`, function (err, results) {
+                            dbConn.query(`select id,firstname,lastname,accesstoken from register_1 where email = "${email}"`, function (err, results) {
                                 res.send(results);
                             });
 
@@ -80,6 +83,7 @@ app.post('/profile', async (req, res) => {
         dbConn.query(`select * from register_1 where email="${ans}"`, function(err, results) {
             if(err) throw err;
             res.send(results);
+            console.log(results)
         })
     }catch(err){
         res.send("error");
@@ -99,6 +103,50 @@ app.get('/getproduct', (req,res)=>{
         if(err) throw err;
         res.send(results);
     })
+})
+
+app.post('/order',(req,res)=>{
+    // console.log(req.body);
+    const ans = req.body.cart1;
+    const grandtotal = req.body.total;
+    const date = new Date();
+    const userid = req.body.userid;
+    // console.log(ans)
+    const id = 'ORD' + Math.floor(Math.random() * 1000);
+    var obj = {
+        ans,
+        orderid: id,
+        grandtotal: grandtotal,
+        date:date,
+        userid:userid
+    };
+    // ans.push(orderid: id,grandtotal:grandtotal);
+    console.log(ans)
+    fs.readFile('order.json',(err,data)=>{
+        if(err){
+            console.log(err);
+        } else {
+            const users = JSON.parse(data);
+            // users.order.push(id);
+            users.order.push(obj)
+            fs.writeFile('order.json', JSON.stringify(users),err => {
+     
+                // Checking for errors
+                if (err) throw err; 
+               
+                res.status(200).send("done");
+            });
+        }
+    })
+    
+})
+
+app.get('/orderdetails',(req,res)=>{
+    console.log(req.query.userid)
+    const userid = req.query.userid;
+    const results = readFileSync('order.json');
+    
+    res.send(results)
 })
 
 app.get('/', (req, res) => {

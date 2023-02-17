@@ -24,13 +24,11 @@ function Register() {
             // const ans = res.data.message;
             // console.log(ans);
             // setAns(ans);
-            navigate("/Login");
-            
+            navigate("/Login"); 
         });
         } else {
             alert("password not matched");
         }
-
     }
 
     return (

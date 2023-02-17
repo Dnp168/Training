@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
-
 import Product_Header from './product_header';
 import axios from "axios";
 import Cart from "./cart";
-
 
 function Product() {
   const [ans, setAns] = useState([]);
   const [cart, setCart] = useState([]);
   const [oncart, setOnCart] = useState(false);
   const [ans1, setAns1] = useState('');
-
-
+  const id=localStorage.getItem("id");
 
   function getProduct() {
     axios.get("http://localhost:9000/getproduct").then((res) => {
@@ -19,7 +16,8 @@ function Product() {
       const ans = res.data;
       const ans1 = res.data;
       setAns(ans);
-      setAns(ans1);
+      setAns(ans1)
+      setAns1(ans1);
     })
   }
 
@@ -124,6 +122,8 @@ function Product() {
         :
         <Cart
           cart={cart}
+          id={id}
+          setOnCart={setOnCart}
         />}
 
     </div>
